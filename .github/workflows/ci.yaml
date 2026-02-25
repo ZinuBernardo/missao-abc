@@ -19,8 +19,10 @@ jobs:
           cache: true
       
       - name: Reconstruct project files
-        run: flutter create . --platforms=android
-
+        run: |
+          rm -rf .android
+          flutter create . --project-name missao_abc --platforms=android
+      
       - name: Install dependencies
         run: flutter pub get
 
