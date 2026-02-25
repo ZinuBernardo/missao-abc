@@ -1,0 +1,22 @@
+{
+    "project_id": "missao_abc_001",
+    "state": "QualityApproved",
+    "last_skill": "quality-gate",
+    "last_invocation": "550e8400-e29b-41d4-a716-446655440004",
+    "artifacts": [
+        "plan.json",
+        "architecture.json",
+        "diagram.mmd",
+        "adr/ADR-001-stack-choice.md",
+        "pubspec.yaml",
+        "README.md",
+        ".github/workflows/ci.yaml",
+        "security-report.sarif",
+        "security_score.txt",
+        "quality_report.json"
+    ],
+    "security_score": 10.0,
+    "blocked": false,
+    "block_reason": null,
+    "budget_used_kz": 26000
+}

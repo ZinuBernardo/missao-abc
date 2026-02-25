@@ -1,0 +1,37 @@
+{
+  "project_id": "missao_abc_001",
+  "project_name": "Missão ABC",
+  "description": "Aplicativo de alfabetização gamificada para crianças de 3 a 7 anos, com foco em letras, sons, sílabas e leitura inicial. Inclui painel para pais e monetização via assinatura.",
+  "pipeline": [
+    {
+      "step": 1,
+      "skill": "system-architect",
+      "depends_on": [],
+      "criteria": "Arquitetura técnica definida (Flutter + Backend), diagramas de componentes e stack validados.",
+      "budget_kz": 5000
+    },
+    {
+      "step": 2,
+      "skill": "scaffold-engine",
+      "depends_on": ["system-architect"],
+      "criteria": "Estrutura do projeto Flutter criada, configuração de i18n inicializada e pastas organizadas por módulos (Pedagogia, Gamificação, Pais).",
+      "budget_kz": 10000
+    },
+    {
+      "step": 3,
+      "skill": "security-guardian",
+      "depends_on": ["scaffold-engine"],
+      "criteria": "Análise de segurança concluída, proteção de dados dos usuários (crianças/pais) e conformidade com LGPD/GDPR/COPPA verificada.",
+      "budget_kz": 6000
+    },
+    {
+      "step": 4,
+      "skill": "quality-gate",
+      "depends_on": ["security-guardian"],
+      "criteria": "Testes unitários e de integração básicos, lint configurado e build Android/iOS funcional.",
+      "budget_kz": 5000
+    }
+  ],
+  "total_budget_kz": 26000,
+  "estimated_duration_minutes": 120
+}

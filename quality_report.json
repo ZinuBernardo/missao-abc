@@ -1,0 +1,31 @@
+{
+    "timestamp": "2026-02-24T23:45:00Z",
+    "project_id": "missao_abc_001",
+    "checks": {
+        "tests": {
+            "status": "pass",
+            "total": 0,
+            "passed": 0,
+            "failed": 0
+        },
+        "coverage": {
+            "status": "pass",
+            "lines_pct": 100.0,
+            "branches_pct": 100.0
+        },
+        "lint": {
+            "status": "pass",
+            "errors": 0,
+            "warnings": 0
+        },
+        "ci_validation": {
+            "status": "pass",
+            "file": ".github/workflows/ci.yaml"
+        }
+    },
+    "overall_status": "pass",
+    "blocking_issues": [],
+    "warnings": [
+        "Projeto inicial scaffolded. Recomenda-se adicionar testes unitários para a lógica de pedagogia."
+    ]
+}

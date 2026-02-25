@@ -1,0 +1,12 @@
+graph TD
+    User((Criança/Pai)) --> App[App Flutter]
+    subgraph "Firebase Cloud"
+        App --> Auth[Firebase Auth]
+        App --> Firestore[(Firestore DB)]
+        App --> Storage[Cloud Storage]
+        App --> Functions[Cloud Functions]
+        Functions --> Payments[Google Play/App Store Billing]
+    end
+    App --> LocalDB[(Hive Local Cache)]
+    Firestore --> Sync[Offline Sync]
+    Sync --> LocalDB
