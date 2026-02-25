@@ -1,4 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:missao_abc/features/pedagogy/screens/phase_one_screen.dart';
+import 'package:missao_abc/features/pedagogy/screens/phase_two_screen.dart';
 import 'package:missao_abc/features/pedagogy/screens/phase_three_screen.dart';
+import 'package:missao_abc/features/pedagogy/screens/phase_four_screen.dart';
 
 class WorldMapScreen extends StatelessWidget {
   const WorldMapScreen({super.key});
