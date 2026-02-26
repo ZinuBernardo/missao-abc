@@ -29,7 +29,7 @@ class PhaseOneScreen extends ConsumerWidget {
         child: SafeArea(
           child: Column(
             children: [
-              _buildHeader(context),
+              _buildHeader(context, ref),
               const Spacer(),
               _buildInstruction(session.target.char),
               const SizedBox(height: 40),
@@ -43,7 +43,8 @@ class PhaseOneScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, WidgetRef ref) {
+    final profile = ref.watch(profileProvider);
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
@@ -51,7 +52,7 @@ class PhaseOneScreen extends ConsumerWidget {
         children: [
           IconButton(
             icon: const Icon(Icons.close, color: Colors.white, size: 32),
-            onPressed: () {},
+            onPressed: () => Navigator.pop(context),
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -59,13 +60,13 @@ class PhaseOneScreen extends ConsumerWidget {
               color: Colors.white.withOpacity(0.2),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Row(
+            child: Row(
               children: [
-                Icon(Icons.star, color: Colors.yellow, size: 24),
-                SizedBox(width: 8),
+                const Icon(Icons.star, color: Colors.yellow, size: 24),
+                const SizedBox(width: 8),
                 Text(
-                  '125',
-                  style: TextStyle(
+                  '${profile?.totalStars ?? 0}',
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -155,7 +156,8 @@ class PhaseOneScreen extends ConsumerWidget {
 
   void _handleSelection(BuildContext context, WidgetRef ref, LetterModel selected, LetterModel target) {
     if (selected.char == target.char) {
-      // Sucesso!
+      // Sucesso! Sincronizar estrelas com Firebase
+      ref.read(profileProvider.notifier).updateStars(10);
       _showSuccessDialog(context, ref);
     } else {
       // Erro (Vibração leve ou som de erro)

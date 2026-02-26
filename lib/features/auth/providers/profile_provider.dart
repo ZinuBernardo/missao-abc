@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user_profile.dart';
 
 final profileProvider = StateNotifierProvider<ProfileNotifier, UserProfile?>((ref) {
@@ -12,15 +13,26 @@ class ProfileNotifier extends StateNotifier<UserProfile?> {
     state = profile;
   }
 
-  void updateStars(int stars) {
+  Future<void> updateStars(int stars) async {
     if (state != null) {
+      final newTotal = state!.totalStars + stars;
       state = UserProfile(
         id: state!.id,
         name: state!.name,
         avatarAsset: state!.avatarAsset,
-        totalStars: state!.totalStars + stars,
+        totalStars: newTotal,
         progress: state!.progress,
       );
+
+      // Sincronizar com Firestore
+      try {
+        await FirebaseFirestore.instance
+            .collection('profiles')
+            .doc(state!.id)
+            .update({'totalStars': newTotal});
+      } catch (e) {
+        print("Erro ao sincronizar estrelas: $e");
+      }
     }
   }
 }
