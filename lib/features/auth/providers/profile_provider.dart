@@ -25,6 +25,7 @@ final availableProfilesProvider = StreamProvider<List<UserProfile>>((ref) {
         name: data['name'] ?? 'Novo Herói',
         avatarAsset: data['avatarAsset'] ?? 'assets/images/avatars/boy.png',
         totalStars: data['totalStars'] ?? 0,
+        totalGames: data['totalGames'] ?? 0,
         progress: Map<String, double>.from(data['progress'] ?? {}),
       );
     }).toList();
@@ -46,6 +47,7 @@ class ProfileNotifier extends StateNotifier<UserProfile?> {
         name: state!.name,
         avatarAsset: state!.avatarAsset,
         totalStars: newTotal,
+        totalGames: state!.totalGames,
         progress: state!.progress,
       );
 
@@ -100,6 +102,7 @@ class ProfileNotifier extends StateNotifier<UserProfile?> {
         name: state!.name,
         avatarAsset: state!.avatarAsset,
         totalStars: newTotal,
+        totalGames: state!.totalGames,
         progress: state!.progress,
       );
 
@@ -122,6 +125,42 @@ class ProfileNotifier extends StateNotifier<UserProfile?> {
         }
       } catch (e) {
         print("Erro ao desbloquear figurinha: $e");
+      }
+    }
+  }
+
+  Future<void> updateProgress(String category, double increment) async {
+    if (state != null) {
+      final currentProgress = state!.progress[category] ?? 0.0;
+      final newProgress = (currentProgress + increment).clamp(0.0, 1.0);
+      
+      final updatedProgress = Map<String, double>.from(state!.progress);
+      updatedProgress[category] = newProgress;
+
+      state = UserProfile(
+        id: state!.id,
+        name: state!.name,
+        avatarAsset: state!.avatarAsset,
+        totalStars: state!.totalStars,
+        totalGames: state!.totalGames + 1,
+        progress: updatedProgress,
+      );
+
+      try {
+        final user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .collection('profiles')
+              .doc(state!.id)
+              .update({
+                'progress.$category': newProgress,
+                'totalGames': FieldValue.increment(1),
+              });
+        }
+      } catch (e) {
+        print("Erro ao atualizar progresso: $e");
       }
     }
   }

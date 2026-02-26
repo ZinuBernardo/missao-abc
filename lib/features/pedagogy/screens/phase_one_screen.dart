@@ -158,6 +158,7 @@ class PhaseOneScreen extends ConsumerWidget {
     if (selected.char == target.char) {
       // Sucesso! Sincronizar estrelas com Firebase
       ref.read(profileProvider.notifier).updateStars(10);
+      ref.read(profileProvider.notifier).updateProgress('letters', 0.04); // +4% por letra
       _showSuccessDialog(context, ref);
     } else {
       // Erro (Vibração leve ou som de erro)

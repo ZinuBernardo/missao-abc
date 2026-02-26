@@ -38,16 +38,31 @@ class ParentDashboardScreen extends ConsumerWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF2D3436)),
             ),
             const SizedBox(height: 15),
-            _buildMetricsGrid(),
+            _buildMetricsGrid(profile?.totalGames ?? 0),
             const SizedBox(height: 30),
             const Text(
               "Habilidades em Destaque",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF2D3436)),
             ),
             const SizedBox(height: 15),
-            _buildSkillProgress(label: "Letras", count: "18 / 26", progress: 0.7, color: Colors.blue),
-            _buildSkillProgress(label: "Sons", count: "12 / 26", progress: 0.45, color: Colors.orange),
-            _buildSkillProgress(label: "Sílabas", count: "5 / 40", progress: 0.12, color: Colors.purple),
+            _buildSkillProgress(
+              label: "Letras", 
+              percent: ((profile?.progress['letters'] ?? 0.0) * 100).toInt(), 
+              progress: profile?.progress['letters'] ?? 0.0, 
+              color: Colors.blue
+            ),
+            _buildSkillProgress(
+              label: "Sílabas", 
+              percent: ((profile?.progress['syllables'] ?? 0.0) * 100).toInt(), 
+              progress: profile?.progress['syllables'] ?? 0.0, 
+              color: Colors.purple
+            ),
+            _buildSkillProgress(
+              label: "Palavras", 
+              percent: ((profile?.progress['words'] ?? 0.0) * 100).toInt(), 
+              progress: profile?.progress['words'] ?? 0.0, 
+              color: Colors.orange
+            ),
             const SizedBox(height: 30),
             _buildPremiumCTA(),
           ],
@@ -89,7 +104,7 @@ class ParentDashboardScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildMetricsGrid() {
+  Widget _buildMetricsGrid(int totalGames) {
     return GridView.count(
       crossAxisCount: 2,
       shrinkWrap: true,
@@ -99,7 +114,7 @@ class ParentDashboardScreen extends ConsumerWidget {
       childAspectRatio: 1.5,
       children: [
         _buildMetricItem("Tempo de Uso", "45 min", Icons.timer, Colors.green),
-        _buildMetricItem("Jogos Concluídos", "12", Icons.sports_esports, Colors.blue),
+        _buildMetricItem("Jogos Concluídos", "$totalGames", Icons.sports_esports, Colors.blue),
       ],
     );
   }
@@ -125,7 +140,7 @@ class ParentDashboardScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSkillProgress({required String label, required String count, required double progress, required Color color}) {
+  Widget _buildSkillProgress({required String label, required int percent, required double progress, required Color color}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 15),
       padding: const EdgeInsets.all(15),
@@ -136,7 +151,7 @@ class ParentDashboardScreen extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-              Text(count, style: const TextStyle(color: Colors.grey)),
+              Text("$percent%", style: const TextStyle(color: Colors.grey)),
             ],
           ),
           const SizedBox(height: 10),

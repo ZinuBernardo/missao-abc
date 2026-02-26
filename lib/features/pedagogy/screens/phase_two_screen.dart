@@ -166,6 +166,7 @@ class _PhaseTwoScreenState extends ConsumerState<PhaseTwoScreen> {
   void _checkWin() {
     if (!_userSyllables.contains(null)) {
       ref.read(profileProvider.notifier).updateStars(15);
+      ref.read(profileProvider.notifier).updateProgress('syllables', 0.1); // +10% por palavra
       _showSuccessDialog();
     }
   }

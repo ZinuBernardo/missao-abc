@@ -151,6 +151,7 @@ class PhaseThreeScreen extends ConsumerWidget {
   void _handleChoice(BuildContext context, WidgetRef ref, String choice, String correct) {
     if (choice == correct) {
       ref.read(profileProvider.notifier).updateStars(20);
+      ref.read(profileProvider.notifier).updateProgress('words', 0.15); // +15% por leitura
       _showSuccess(context, ref);
     } else {
       _showError(context);
