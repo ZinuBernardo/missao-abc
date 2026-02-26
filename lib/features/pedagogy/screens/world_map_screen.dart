@@ -81,7 +81,7 @@ class WorldMapScreen extends StatelessWidget {
               padding: const EdgeInsets.all(15),
               decoration: BoxDecoration(
                 color: isUnlocked ? color : Colors.grey[400],
-                shape: BoxScheme.circle,
+                shape: BoxShape.circle,
                 border: Border.all(color: Colors.white, width: 4),
                 boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 10)],
               ),

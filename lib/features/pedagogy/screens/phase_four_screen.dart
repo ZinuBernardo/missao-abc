@@ -95,7 +95,7 @@ class _PhaseFourScreenState extends ConsumerState<PhaseFourScreen> {
                   onTap: () {}, // Play audio
                   child: Container(
                     padding: const EdgeInsets.all(15),
-                    decoration: const BoxDecoration(color: Color(0xFF6C5CE7), shape: BoxScheme.circle),
+                    decoration: const BoxDecoration(color: Color(0xFF6C5CE7), shape: BoxShape.circle),
                     child: const Icon(Icons.volume_up, color: Colors.white, size: 40),
                   ),
                 ),

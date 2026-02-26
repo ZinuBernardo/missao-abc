@@ -95,7 +95,7 @@ class PhaseOneScreen extends ConsumerWidget {
           padding: const EdgeInsets.all(20),
           decoration: const BoxDecoration(
             color: Colors.white,
-            shape: BoxScheme.circle,
+            shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
                 color: Colors.black26,

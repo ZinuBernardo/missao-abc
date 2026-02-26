@@ -63,7 +63,7 @@ class ProfileSelectionScreen extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
-                shape: BoxScheme.circle,
+                shape: BoxShape.circle,
                 border: Border.all(color: const Color(0xFF6C5CE7), width: 4),
               ),
               child: CircleAvatar(
@@ -92,7 +92,7 @@ class ProfileSelectionScreen extends ConsumerWidget {
           height: 130,
           decoration: BoxDecoration(
             color: Colors.grey[200],
-            shape: BoxScheme.circle,
+            shape: BoxShape.circle,
           ),
           child: const Icon(Icons.add, size: 50, color: Colors.grey),
         ),
