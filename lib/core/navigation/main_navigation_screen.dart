@@ -1,4 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:missao_abc/features/pedagogy/screens/world_map_screen.dart';
+import 'package:missao_abc/features/gamification/screens/sticker_album_screen.dart';
+import 'package:missao_abc/features/parents_dashboard/screens/parent_dashboard_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -50,7 +53,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               label: 'Álbum',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.parent_gateway),
+              icon: Icon(Icons.family_restroom),
               label: 'Pais',
             ),
           ],
