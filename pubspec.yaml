@@ -43,5 +43,14 @@ flutter:
   generate: true
   assets:
     - assets/images/
+    - assets/images/avatars/
+    - assets/images/stickers/
+    - assets/images/stories/
+    - assets/images/words/
     - assets/audio/
+    - assets/audio/effects/
+    - assets/audio/letters/
+    - assets/audio/syllables/
+    - assets/audio/words/
+    - assets/audio/stories/
     - assets/fonts/
