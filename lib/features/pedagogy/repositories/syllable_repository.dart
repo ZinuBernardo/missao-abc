@@ -9,16 +9,28 @@ class SyllableRepository {
       soundAsset: "audio/words/bolo.mp3",
     ),
     WordModel(
-      fullWord: "DADO",
-      mandatorySyllables: ["DA", "DO"],
-      imageAsset: "assets/images/words/dice.png",
-      soundAsset: "audio/words/dado.mp3",
+      fullWord: "BOLA",
+      mandatorySyllables: ["BO", "LA"],
+      imageAsset: "assets/images/words/ball.png",
+      soundAsset: "audio/words/bola.mp3",
     ),
     WordModel(
-      fullWord: "CASA",
-      mandatorySyllables: ["CA", "SA"],
-      imageAsset: "assets/images/words/house.png",
-      soundAsset: "audio/words/casa.mp3",
+      fullWord: "GATO",
+      mandatorySyllables: ["GA", "TO"],
+      imageAsset: "assets/images/words/cat.png",
+      soundAsset: "audio/words/gato.mp3",
+    ),
+    WordModel(
+      fullWord: "SAPO",
+      mandatorySyllables: ["SA", "PO"],
+      imageAsset: "assets/images/words/frog.png",
+      soundAsset: "audio/words/sapo.mp3",
+    ),
+    WordModel(
+      fullWord: "MESA",
+      mandatorySyllables: ["ME", "SA"],
+      imageAsset: "assets/images/words/table.png",
+      soundAsset: "audio/words/mesa.mp3",
     ),
   ];
 

@@ -27,6 +27,25 @@ class StoryRepository {
         ),
       ],
     ),
+    StoryModel(
+      id: '2',
+      title: 'O Sol e a Lua',
+      coverImage: 'assets/images/stories/sun_moon_cover.png',
+      pages: [
+        StoryPage(
+          text: 'O Sol brilha de dia.',
+          imageAsset: 'assets/images/stories/sun.png',
+          audioAsset: 'audio/stories/sun.mp3',
+          highlightWords: ['Sol', 'dia'],
+        ),
+        StoryPage(
+          text: 'A Lua brilha de noite.',
+          imageAsset: 'assets/images/stories/moon.png',
+          audioAsset: 'audio/stories/moon.mp3',
+          highlightWords: ['Lua', 'noite'],
+        ),
+      ],
+    ),
   ];
 
   List<StoryModel> getAllStories() => _stories;

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/letter_model.dart';
 import '../repositories/pedagogy_repository.dart';
 import '../../../core/services/audio_service.dart';
+import '../../../core/widgets/premium_success_dialog.dart';
 import '../../auth/providers/profile_provider.dart';
 
 final pedagogyRepositoryProvider = Provider((ref) => PedagogyRepository());
@@ -123,7 +124,10 @@ class PhaseOneScreen extends ConsumerWidget {
       alignment: WrapAlignment.center,
       children: session.options.map((letter) {
         return GestureDetector(
-          onTap: () => _handleSelection(context, ref, letter, session.target),
+          onTap: () {
+            ref.read(audioServiceProvider).playPop();
+            _handleSelection(context, ref, letter, session.target);
+          },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               width: 100,
@@ -181,44 +185,15 @@ class PhaseOneScreen extends ConsumerWidget {
   }
 
   void _showSuccessDialog(BuildContext context, WidgetRef ref) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Center(
-          child: Text(
-            "Parabéns! 🌟",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-        ),
-        content: const Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.check_circle, color: Colors.green, size: 80),
-            SizedBox(height: 16),
-            Text("Você acertou a letra!"),
-          ],
-        ),
-        actions: [
-          Center(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF4CAF50),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-                ref.read(gameSessionProvider.notifier).state = 
-                    ref.read(pedagogyRepositoryProvider).generateSession();
-              },
-              child: const Text("PRÓXIMA", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            ),
-          ),
-        ],
-      ),
+    showPremiumSuccess(
+      context,
+      title: "Parabéns! 🌟",
+      message: "Você encontrou a letra certa!",
+      stars: 10,
+      onNext: () {
+        ref.read(gameSessionProvider.notifier).state = 
+            ref.read(pedagogyRepositoryProvider).generateSession();
+      },
     );
   }
 

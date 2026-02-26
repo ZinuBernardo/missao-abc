@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/story_model.dart';
 import '../repositories/story_repository.dart';
 import '../../../core/services/audio_service.dart';
+import '../../../core/widgets/premium_success_dialog.dart';
 import '../../auth/providers/profile_provider.dart';
 
 final storyRepositoryProvider = Provider((ref) => StoryRepository());
@@ -107,7 +108,10 @@ class _PhaseFourScreenState extends ConsumerState<PhaseFourScreen> {
                 _buildSentence(page.text, page.highlightWords),
                 const SizedBox(height: 30),
                 GestureDetector(
-                  onTap: () => ref.read(audioServiceProvider).playAsset(page.audioAsset),
+                  onTap: () {
+                    ref.read(audioServiceProvider).playPop();
+                    ref.read(audioServiceProvider).playAsset(page.audioAsset);
+                  },
                   child: Container(
                     padding: const EdgeInsets.all(15),
                     decoration: const BoxDecoration(color: Color(0xFF6C5CE7), shape: BoxShape.circle),
@@ -175,40 +179,12 @@ class _PhaseFourScreenState extends ConsumerState<PhaseFourScreen> {
   }
 
   void _showCompletionDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-        title: const Center(child: Text("Fim da História! 📖", style: TextStyle(fontWeight: FontWeight.bold))),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Lottie.network(
-              'https://assets10.lottiefiles.com/packages/lf20_tou99bm8.json', // Party animation
-              height: 150,
-            ),
-            const Text("Você é um excelente leitor! Ganhou 50 estrelas!"),
-          ],
-        ),
-        actions: [
-          Center(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF6C5CE7),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-              ),
-              onPressed: () {
-                Navigator.pop(context); // Dialog
-                Navigator.pop(context); // Screen
-              },
-              child: const Text("VOLTAR AO MAPA"),
-            ),
-          ),
-        ],
-      ),
+    showPremiumSuccess(
+      context,
+      title: "Fim da História! 📖",
+      message: "Você é um excelente leitor!",
+      stars: 50,
+      onNext: () => Navigator.pop(context),
     );
   }
 

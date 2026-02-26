@@ -1,16 +1,17 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:missao_abc/features/pedagogy/screens/world_map_screen.dart';
 import 'package:missao_abc/features/gamification/screens/sticker_album_screen.dart';
 import 'package:missao_abc/features/parents_dashboard/screens/parent_dashboard_screen.dart';
+import '../services/audio_service.dart';
 
-class MainNavigationScreen extends StatefulWidget {
+class MainNavigationScreen extends ConsumerStatefulWidget {
   const MainNavigationScreen({super.key});
 
   @override
-  State<MainNavigationScreen> createState() => _MainNavigationScreenState();
+  ConsumerState<MainNavigationScreen> createState() => _MainNavigationScreenState();
 }
 
-class _MainNavigationScreenState extends State<MainNavigationScreen> {
+class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
@@ -39,6 +40,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         child: BottomNavigationBar(
           currentIndex: _selectedIndex,
           onTap: (index) {
+            ref.read(audioServiceProvider).playPop();
             setState(() {
               _selectedIndex = index;
             });

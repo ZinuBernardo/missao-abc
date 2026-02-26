@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:missao_abc/core/services/audio_service.dart';
 import 'package:missao_abc/features/auth/providers/profile_provider.dart';
 import 'package:missao_abc/features/pedagogy/screens/phase_one_screen.dart';
 import 'package:missao_abc/features/pedagogy/screens/phase_two_screen.dart';
@@ -189,7 +190,10 @@ class WorldMapScreen extends ConsumerWidget {
         child: Column(
           children: [
             GestureDetector(
-              onTap: isUnlocked ? onTap : null,
+              onTap: isUnlocked ? () {
+                ref.read(audioServiceProvider).playPop();
+                onTap();
+              } : null,
               child: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(

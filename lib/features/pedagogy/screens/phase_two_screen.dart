@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/syllable_model.dart';
 import '../repositories/syllable_repository.dart';
 import '../../../core/services/audio_service.dart';
+import '../../../core/widgets/premium_success_dialog.dart';
 import '../../auth/providers/profile_provider.dart';
 
 final syllableRepositoryProvider = Provider((ref) => SyllableRepository());
@@ -177,39 +178,16 @@ class _PhaseTwoScreenState extends ConsumerState<PhaseTwoScreen> {
   }
 
   void _showSuccessDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Center(child: Text("Muito bem! 🌟", style: TextStyle(fontWeight: FontWeight.bold))),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.check_circle, color: Colors.green, size: 80),
-            const SizedBox(height: 16),
-            Text("Você montou a palavra ${_currentWord.fullWord}!"),
-          ],
-        ),
-        actions: [
-          Center(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF4CAF50),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-                setState(() {
-                  _loadNextWord();
-                });
-              },
-              child: const Text("PRÓXIMA"),
-            ),
-          ),
-        ],
-      ),
+    showPremiumSuccess(
+      context,
+      title: "Muito bem! 🌟",
+      message: "Você montou a palavra ${_currentWord.fullWord}!",
+      stars: 15,
+      onNext: () {
+        setState(() {
+          _loadNextWord();
+        });
+      },
     );
   }
 

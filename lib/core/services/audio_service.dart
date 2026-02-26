@@ -21,4 +21,8 @@ class AudioService {
   Future<void> playWrong() async {
     await playAsset('audio/effects/wrong.mp3');
   }
+
+  Future<void> playPop() async {
+    await playAsset('audio/effects/pop.mp3');
+  }
 }

@@ -4,6 +4,7 @@ import 'package:lottie/lottie.dart';
 import '../models/reading_model.dart';
 import '../repositories/reading_repository.dart';
 import '../../../core/services/audio_service.dart';
+import '../../../core/widgets/premium_success_dialog.dart';
 import '../../auth/providers/profile_provider.dart';
 
 final readingRepositoryProvider = Provider((ref) => ReadingRepository());
@@ -117,7 +118,10 @@ class PhaseThreeScreen extends ConsumerWidget {
     return Column(
       children: module.options.map((option) {
         return GestureDetector(
-          onTap: () => _handleChoice(context, ref, option, module.correctAnswer),
+          onTap: () {
+            ref.read(audioServiceProvider).playPop();
+            _handleChoice(context, ref, option, module.correctAnswer);
+          },
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 8),
@@ -164,38 +168,15 @@ class PhaseThreeScreen extends ConsumerWidget {
   }
 
   void _showSuccess(BuildContext context, WidgetRef ref) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              "EXCELENTE! 🎈",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green),
-            ),
-            const SizedBox(height: 20),
-            const Icon(Icons.star, size: 80, color: Colors.orangeAccent),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-                ref.read(currentReadingModuleProvider.notifier).state = 
-                    ref.read(readingRepositoryProvider).getRandomModule();
-              },
-              child: const Text("PRÓXIMO", style: TextStyle(color: Colors.white, fontSize: 18)),
-            ),
-          ],
-        ),
-      ),
+    showPremiumSuccess(
+      context,
+      title: "EXCELENTE! 🎈",
+      message: "Você é um mestre da leitura!",
+      stars: 20,
+      onNext: () {
+        ref.read(currentReadingModuleProvider.notifier).state = 
+            ref.read(readingRepositoryProvider).getRandomModule();
+      },
     );
   }
 
