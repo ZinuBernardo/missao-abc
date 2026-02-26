@@ -34,7 +34,7 @@ class ProfileSelectionScreen extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 30),
                   itemCount: profileList.length + 1,
                   itemBuilder: (context, index) {
-                    if (index == profileList.length) return _buildAddProfile(context);
+                    if (index == profileList.length) return _buildAddProfile(context, ref);
                     return _buildProfileCard(context, ref, profileList[index]);
                   },
                 ),
@@ -90,21 +90,107 @@ class ProfileSelectionScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildAddProfile(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          width: 130,
-          height: 130,
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-            shape: BoxShape.circle,
+  Widget _buildAddProfile(BuildContext context, WidgetRef ref) {
+    return GestureDetector(
+      onTap: () => _showAddProfileDialog(context, ref),
+      child: Column(
+        children: [
+          Container(
+            width: 130,
+            height: 130,
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.add, size: 50, color: Colors.grey),
           ),
-          child: const Icon(Icons.add, size: 50, color: Colors.grey),
+          const SizedBox(height: 15),
+          const Text("Novo", style: TextStyle(fontSize: 18, color: Colors.grey)),
+        ],
+      ),
+    );
+  }
+
+  void _showAddProfileDialog(BuildContext context, WidgetRef ref) {
+    final nameController = TextEditingController();
+    String selectedAvatar = 'assets/images/avatars/boy.png';
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text("Novo Aventureiro"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(
+                  labelText: "Nome da criança",
+                  hintText: "Ex: Davi, Alice...",
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text("Escolha um avatar:", style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _avatarOption(
+                    'assets/images/avatars/boy.png',
+                    selectedAvatar == 'assets/images/avatars/boy.png',
+                    () => setDialogState(() => selectedAvatar = 'assets/images/avatars/boy.png'),
+                  ),
+                  _avatarOption(
+                    'assets/images/avatars/girl.png',
+                    selectedAvatar == 'assets/images/avatars/girl.png',
+                    () => setDialogState(() => selectedAvatar = 'assets/images/avatars/girl.png'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("CANCELAR"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (nameController.text.isNotEmpty) {
+                  await ref.read(profileProvider.notifier).createProfile(
+                    nameController.text,
+                    selectedAvatar,
+                  );
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text("CRIAR"),
+            ),
+          ],
         ),
-        const SizedBox(height: 15),
-        const Text("Novo", style: TextStyle(fontSize: 18, color: Colors.grey)),
-      ],
+      ),
+    );
+  }
+
+  Widget _avatarOption(String asset, bool isSelected, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: isSelected ? const Color(0xFF6C5CE7) : Colors.transparent,
+            width: 3,
+          ),
+          shape: BoxShape.circle,
+        ),
+        child: CircleAvatar(
+          radius: 30,
+          backgroundColor: Colors.grey[200],
+          child: const Icon(Icons.person, color: Colors.grey), // Placeholder para imagem real
+        ),
+      ),
     );
   }
 }

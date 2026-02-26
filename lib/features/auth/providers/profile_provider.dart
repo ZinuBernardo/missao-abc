@@ -50,6 +50,22 @@ class ProfileNotifier extends StateNotifier<UserProfile?> {
       }
     }
   }
+
+  Future<void> createProfile(String name, String avatarAsset) async {
+    try {
+      final docRef = FirebaseFirestore.instance.collection('profiles').doc();
+      final newProfile = {
+        'name': name,
+        'avatarAsset': avatarAsset,
+        'totalStars': 0,
+        'progress': {},
+        'createdAt': FieldValue.serverTimestamp(),
+      };
+      await docRef.set(newProfile);
+    } catch (e) {
+      print("Erro ao criar perfil: $e");
+    }
+  }
 }
 
 // Removido o provider estático para usar o StreamProvider acima
