@@ -1,13 +1,23 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../models/user_profile.dart';
+import 'auth_provider.dart';
 
 final profileProvider = StateNotifierProvider<ProfileNotifier, UserProfile?>((ref) {
   return ProfileNotifier();
 });
 
 final availableProfilesProvider = StreamProvider<List<UserProfile>>((ref) {
-  return FirebaseFirestore.instance.collection('profiles').snapshots().map((snapshot) {
+  final user = ref.watch(authProvider).value;
+  if (user == null) return Stream.value([]);
+
+  return FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.uid)
+      .collection('profiles')
+      .snapshots()
+      .map((snapshot) {
     return snapshot.docs.map((doc) {
       final data = doc.data();
       return UserProfile(
@@ -41,10 +51,15 @@ class ProfileNotifier extends StateNotifier<UserProfile?> {
 
       // Sincronizar com Firestore
       try {
-        await FirebaseFirestore.instance
-            .collection('profiles')
-            .doc(state!.id)
-            .update({'totalStars': newTotal});
+        final user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .collection('profiles')
+              .doc(state!.id)
+              .update({'totalStars': newTotal});
+        }
       } catch (e) {
         print("Erro ao sincronizar estrelas: $e");
       }
@@ -53,7 +68,15 @@ class ProfileNotifier extends StateNotifier<UserProfile?> {
 
   Future<void> createProfile(String name, String avatarAsset) async {
     try {
-      final docRef = FirebaseFirestore.instance.collection('profiles').doc();
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return;
+
+      final docRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('profiles')
+          .doc();
+      
       final newProfile = {
         'name': name,
         'avatarAsset': avatarAsset,
