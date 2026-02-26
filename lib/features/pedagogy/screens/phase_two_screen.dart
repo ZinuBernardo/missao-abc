@@ -9,13 +9,33 @@ final currentWordProvider = StateProvider<WordModel>((ref) {
   return ref.read(syllableRepositoryProvider).getNextWord();
 });
 
-class PhaseTwoScreen extends ConsumerWidget {
+class PhaseTwoScreen extends ConsumerStatefulWidget {
   const PhaseTwoScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final word = ref.watch(currentWordProvider);
+  ConsumerState<PhaseTwoScreen> createState() => _PhaseTwoScreenState();
+}
 
+class _PhaseTwoScreenState extends ConsumerState<PhaseTwoScreen> {
+  final List<String?> _userSyllables = [];
+  late WordModel _currentWord;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNextWord();
+  }
+
+  void _loadNextWord() {
+    _currentWord = ref.read(syllableRepositoryProvider).getNextWord();
+    _userSyllables.clear();
+    for (var i = 0; i < _currentWord.mandatorySyllables.length; i++) {
+      _userSyllables.add(null);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -31,11 +51,11 @@ class PhaseTwoScreen extends ConsumerWidget {
             children: [
               _buildHeader(context),
               const SizedBox(height: 20),
-              _buildWordImage(word),
+              _buildWordImage(_currentWord),
               const SizedBox(height: 30),
-              _buildSyllableSlots(word),
+              _buildSyllableSlots(_currentWord),
               const Spacer(),
-              _buildAvailableSyllables(context, ref, word),
+              _buildAvailableSyllables(_currentWord),
               const SizedBox(height: 40),
             ],
           ),
@@ -45,17 +65,32 @@ class PhaseTwoScreen extends ConsumerWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
+    final profile = ref.watch(profileProvider);
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+            icon: const Icon(Icons.close, color: Colors.white, size: 32),
             onPressed: () => Navigator.pop(context),
           ),
-          const Text(
-            "Monte a Palavra",
-            style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.star, color: Colors.yellow, size: 24),
+                const SizedBox(width: 8),
+                Text(
+                  '${profile?.totalStars ?? 0}',
+                  style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -86,30 +121,104 @@ class PhaseTwoScreen extends ConsumerWidget {
   Widget _buildSyllableSlots(WordModel word) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: word.mandatorySyllables.map((s) {
-        return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 10),
-          width: 80,
-          height: 80,
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.3),
-            borderRadius: BorderRadius.circular(15),
-            border: Border.all(color: Colors.white, width: 2, style: BorderStyle.solid),
-          ),
-          child: const Center(child: Text("?", style: TextStyle(color: Colors.white, fontSize: 32))),
+      children: List.generate(word.mandatorySyllables.length, (index) {
+        return DragTarget<String>(
+          onAccept: (receivedSyllable) {
+            if (receivedSyllable == word.mandatorySyllables[index]) {
+              setState(() {
+                _userSyllables[index] = receivedSyllable;
+              });
+              _checkWin();
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Tente outra sílaba!"), duration: Duration(seconds: 1)),
+              );
+            }
+          },
+          builder: (context, candidateData, rejectedData) {
+            final isFilled = _userSyllables[index] != null;
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10),
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: isFilled ? Colors.white : Colors.white.withOpacity(0.3),
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(color: Colors.white, width: 2),
+              ),
+              child: Center(
+                child: Text(
+                  _userSyllables[index] ?? "?",
+                  style: TextStyle(
+                    color: isFilled ? const Color(0xFF6C5CE7) : Colors.white,
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            );
+          },
         );
-      }).toList(),
+      }),
     );
   }
 
-  Widget _buildAvailableSyllables(BuildContext context, WidgetRef ref, WordModel word) {
-    // Mistura as sílabas corretas com algumas aleatórias
-    final List<String> allOptions = List.from(word.mandatorySyllables)..addAll(["MA", "PE", "TI"]);
-    allOptions.shuffle();
+  void _checkWin() {
+    if (!_userSyllables.contains(null)) {
+      ref.read(profileProvider.notifier).updateStars(15);
+      _showSuccessDialog();
+    }
+  }
+
+  void _showSuccessDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Center(child: Text("Muito bem! 🌟", style: TextStyle(fontWeight: FontWeight.bold))),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.check_circle, color: Colors.green, size: 80),
+            const SizedBox(height: 16),
+            Text("Você montou a palavra ${_currentWord.fullWord}!"),
+          ],
+        ),
+        actions: [
+          Center(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF4CAF50),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+                setState(() {
+                  _loadNextWord();
+                });
+              },
+              child: const Text("PRÓXIMA"),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAvailableSyllables(WordModel word) {
+    final List<String> options = List.from(word.mandatorySyllables)..addAll(["MA", "PA", "TO"]);
+    options.shuffle();
 
     return Wrap(
       spacing: 15,
-      children: allOptions.map((s) {
+      runSpacing: 15,
+      alignment: WrapAlignment.center,
+      children: options.map((s) {
+        final isAlreadyUsed = _userSyllables.contains(s);
+        if (isAlreadyUsed) return const SizedBox(width: 70, height: 70);
+
         return Draggable<String>(
           data: s,
           feedback: _buildSyllableChip(s, isDragging: true),
