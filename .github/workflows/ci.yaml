@@ -22,9 +22,22 @@ jobs:
         run: |
           rm -rf .android
           flutter create . --project-name missao_abc --platforms=android
+          
+          # Criar google-services.json
+          echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > android/app/google-services.json
+          
+          # Configurar applicationId correto (com.connectivaaz.missao_abc)
+          sed -i 's/applicationId ".*"/applicationId "com.connectivaaz.missao_abc"/g' android/app/build.gradle
+          
           # Habilitar MultiDex no build.gradle gerado
           sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 21/g' android/app/build.gradle
           sed -i '/defaultConfig {/a \        multiDexEnabled true' android/app/build.gradle
+
+          # Adicionar plugins no build.gradle do projeto
+          sed -i "/dependencies {/a \        classpath 'com.google.gms:google-services:4.3.15'" android/build.gradle
+          
+          # Adicionar plugin no build.gradle do app
+          sed -i "/apply plugin: 'com.android.application'/a apply plugin: 'com.google.gms.google-services'" android/app/build.gradle
       
       - name: Install dependencies
         run: flutter pub get
