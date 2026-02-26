@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
+import '../models/user_profile.dart';
 import '../providers/profile_provider.dart';
+
 import '../../../core/navigation/main_navigation_screen.dart';
 
 class ProfileSelectionScreen extends ConsumerWidget {
