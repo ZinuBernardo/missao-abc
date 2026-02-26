@@ -118,18 +118,19 @@ class PhaseThreeScreen extends ConsumerWidget {
       children: module.options.map((option) {
         return GestureDetector(
           onTap: () => _handleChoice(context, ref, option, module.correctAnswer),
-          child: Container(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
             margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 8),
-            padding: const EdgeInsets.symmetric(vertical: 15),
+            padding: const EdgeInsets.symmetric(vertical: 20),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: const Color(0xFFBAE6FD), width: 2),
+              borderRadius: BorderRadius.circular(25),
+              border: Border.all(color: const Color(0xFFE0F2FE), width: 2),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 5,
-                  offset: const Offset(0, 3),
+                  color: const Color(0xFF0369A1).withOpacity(0.08),
+                  blurRadius: 12,
+                  offset: const Offset(0, 6),
                 ),
               ],
             ),
@@ -137,10 +138,10 @@ class PhaseThreeScreen extends ConsumerWidget {
               child: Text(
                 option,
                 style: const TextStyle(
-                  fontSize: 28,
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
-                  color: Color(0xFF0C4A6E),
+                  color: Color(0xFF0369A1),
+                  letterSpacing: 1.1,
                 ),
               ),
             ),

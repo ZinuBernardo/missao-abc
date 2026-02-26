@@ -124,32 +124,38 @@ class PhaseOneScreen extends ConsumerWidget {
       children: session.options.map((letter) {
         return GestureDetector(
           onTap: () => _handleSelection(context, ref, letter, session.target),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            width: 100,
-            height: 120,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 10,
-                  offset: const Offset(0, 5),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: 100,
+              height: 120,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.white, Colors.grey[50]!],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-              ],
-            ),
-            child: Center(
-              child: Text(
-                letter.char,
-                style: const TextStyle(
-                  fontSize: 64,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF333333),
+                borderRadius: BorderRadius.circular(22),
+                border: Border.all(color: Colors.white, width: 3),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF6C5CE7).withOpacity(0.1),
+                    blurRadius: 15,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Center(
+                child: Text(
+                  letter.char,
+                  style: const TextStyle(
+                    fontSize: 64,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF2D3436),
+                    letterSpacing: -2,
+                  ),
                 ),
               ),
             ),
-          ),
         );
       }).toList(),
     );
