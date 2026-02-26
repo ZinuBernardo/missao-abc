@@ -89,6 +89,42 @@ class ProfileNotifier extends StateNotifier<UserProfile?> {
       print("Erro ao criar perfil: $e");
     }
   }
+
+  Future<void> unlockSticker(String stickerId, int cost) async {
+    if (state != null && state!.totalStars >= cost) {
+      final newTotal = state!.totalStars - cost;
+      
+      // Atualizar estado local
+      state = UserProfile(
+        id: state!.id,
+        name: state!.name,
+        avatarAsset: state!.avatarAsset,
+        totalStars: newTotal,
+        progress: state!.progress,
+      );
+
+      // Sincronizar com Firestore
+      try {
+        final user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          final profileRef = FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .collection('profiles')
+              .doc(state!.id);
+
+          await FirebaseFirestore.instance.runTransaction((transaction) async {
+            transaction.update(profileRef, {
+              'totalStars': newTotal,
+              'unlockedStickers': FieldValue.arrayUnion([stickerId]),
+            });
+          });
+        }
+      } catch (e) {
+        print("Erro ao desbloquear figurinha: $e");
+      }
+    }
+  }
 }
 
 // Removido o provider estático para usar o StreamProvider acima
