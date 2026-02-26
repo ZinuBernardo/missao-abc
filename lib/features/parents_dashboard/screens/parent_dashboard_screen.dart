@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../auth/providers/auth_provider.dart';
+import '../../auth/providers/profile_provider.dart';
 
-class ParentDashboardScreen extends StatelessWidget {
+class ParentDashboardScreen extends ConsumerWidget {
   const ParentDashboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profile = ref.watch(profileProvider);
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
@@ -13,7 +17,13 @@ class ParentDashboardScreen extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
         actions: [
-          IconButton(icon: const Icon(Icons.settings, color: Colors.grey), onPressed: () {}),
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.redAccent),
+            onPressed: () {
+              ref.read(authNotifierProvider.notifier).signOut();
+              Navigator.pop(context);
+            },
+          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -21,7 +31,7 @@ class ParentDashboardScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildWelcomeCard(),
+            _buildWelcomeCard(profile?.name ?? "Família"),
             const SizedBox(height: 30),
             const Text(
               "Resumo Semanal",
@@ -46,7 +56,7 @@ class ParentDashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildWelcomeCard() {
+  Widget _buildWelcomeCard(String name) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -64,12 +74,12 @@ class ParentDashboardScreen extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text("Olá, Família!", style: TextStyle(color: Colors.white, fontSize: 18)),
-                SizedBox(height: 5),
+              children: [
+                const Text("Olá, Família!", style: TextStyle(color: Colors.white, fontSize: 18)),
+                const SizedBox(height: 5),
                 Text(
-                  "Davi aprendeu 3 novas letras hoje! 🎉",
-                  style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w400),
+                  "$name está brilhando na alfabetização! 🎉",
+                  style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w400),
                 ),
               ],
             ),

@@ -22,7 +22,7 @@ class PhaseThreeScreen extends ConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(context),
+            _buildHeader(context, ref),
             const SizedBox(height: 20),
             const Text(
               "O que está na imagem?",
@@ -39,7 +39,8 @@ class PhaseThreeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, WidgetRef ref) {
+    final profile = ref.watch(profileProvider);
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
@@ -49,12 +50,25 @@ class PhaseThreeScreen extends ConsumerWidget {
             icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF0369A1)),
             onPressed: () => Navigator.pop(context),
           ),
-          const Expanded(
-            child: LinearProgressIndicator(
-              value: 0.6,
-              minHeight: 10,
-              backgroundColor: Color(0xFFE0F2FE),
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF38BDF8)),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF0369A1).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.star, color: Colors.orangeAccent, size: 24),
+                const SizedBox(width: 8),
+                Text(
+                  '${profile?.totalStars ?? 0}',
+                  style: const TextStyle(
+                    color: Color(0xFF0369A1),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(width: 48), // Equilíbrio
@@ -136,6 +150,7 @@ class PhaseThreeScreen extends ConsumerWidget {
 
   void _handleChoice(BuildContext context, WidgetRef ref, String choice, String correct) {
     if (choice == correct) {
+      ref.read(profileProvider.notifier).updateStars(20);
       _showSuccess(context, ref);
     } else {
       _showError(context);

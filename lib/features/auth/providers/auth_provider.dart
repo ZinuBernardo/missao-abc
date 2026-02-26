@@ -22,3 +22,7 @@ class AuthNotifier extends StateNotifier<User?> {
     state = null;
   }
 }
+
+final authNotifierProvider = StateNotifierProvider<AuthNotifier, User?>((ref) {
+  return AuthNotifier();
+});

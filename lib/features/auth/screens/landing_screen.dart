@@ -3,10 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import '../providers/auth_provider.dart';
 
-final authNotifierProvider = StateNotifierProvider<AuthNotifier, User?>((ref) {
-  return AuthNotifier();
-});
-
 class LandingScreen extends ConsumerWidget {
   const LandingScreen({super.key});
 
