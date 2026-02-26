@@ -75,7 +75,12 @@ class ProfileSelectionScreen extends ConsumerWidget {
               child: CircleAvatar(
                 radius: 60,
                 backgroundColor: const Color(0xFFF0EDFF),
-                child: const Icon(Icons.person, size: 70, color: Color(0xFF6C5CE7)),
+                backgroundImage: profile.avatarAsset.startsWith('assets') 
+                  ? AssetImage(profile.avatarAsset) 
+                  : null as ImageProvider?,
+                child: profile.avatarAsset.startsWith('assets') 
+                  ? null 
+                  : const Icon(Icons.person, size: 70, color: Color(0xFF6C5CE7)),
               ),
             ),
             const SizedBox(height: 15),
@@ -188,7 +193,7 @@ class ProfileSelectionScreen extends ConsumerWidget {
         child: CircleAvatar(
           radius: 30,
           backgroundColor: Colors.grey[200],
-          child: const Icon(Icons.person, color: Colors.grey), // Placeholder para imagem real
+          backgroundImage: AssetImage(asset),
         ),
       ),
     );

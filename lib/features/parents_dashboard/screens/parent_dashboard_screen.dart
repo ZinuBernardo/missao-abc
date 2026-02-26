@@ -63,6 +63,12 @@ class ParentDashboardScreen extends ConsumerWidget {
               progress: profile?.progress['words'] ?? 0.0, 
               color: Colors.orange
             ),
+            _buildSkillProgress(
+              label: "Escrita", 
+              percent: ((profile?.progress['writing'] ?? 0.0) * 100).toInt(), 
+              progress: profile?.progress['writing'] ?? 0.0, 
+              color: Colors.redAccent
+            ),
             const SizedBox(height: 30),
             _buildPremiumCTA(),
           ],

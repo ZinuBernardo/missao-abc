@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/letter_model.dart';
 import '../repositories/pedagogy_repository.dart';
+import '../../../core/services/audio_service.dart';
+import '../../auth/providers/profile_provider.dart';
 
 final pedagogyRepositoryProvider = Provider((ref) => PedagogyRepository());
 
@@ -105,10 +107,9 @@ class PhaseOneScreen extends ConsumerWidget {
               ),
             ],
           ),
-          child: const Icon(
-            Icons.volume_up,
-            size: 60,
-            color: Color(0xFF1976D2),
+          child: IconButton(
+            icon: const Icon(Icons.volume_up, size: 60, color: Color(0xFF1976D2)),
+            onPressed: () => ref.read(audioServiceProvider).playAsset('audio/letters/${targetChar.toLowerCase()}.mp3'),
           ),
         ),
       ],
@@ -157,11 +158,13 @@ class PhaseOneScreen extends ConsumerWidget {
   void _handleSelection(BuildContext context, WidgetRef ref, LetterModel selected, LetterModel target) {
     if (selected.char == target.char) {
       // Sucesso! Sincronizar estrelas com Firebase
+      ref.read(audioServiceProvider).playCorrect();
       ref.read(profileProvider.notifier).updateStars(10);
       ref.read(profileProvider.notifier).updateProgress('letters', 0.04); // +4% por letra
       _showSuccessDialog(context, ref);
     } else {
-      // Erro (Vibração leve ou som de erro)
+      // Erro
+      ref.read(audioServiceProvider).playWrong();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Tente novamente!"),

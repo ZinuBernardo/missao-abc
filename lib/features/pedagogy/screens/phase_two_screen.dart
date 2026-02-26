@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/syllable_model.dart';
 import '../repositories/syllable_repository.dart';
+import '../../../core/services/audio_service.dart';
+import '../../auth/providers/profile_provider.dart';
 
 final syllableRepositoryProvider = Provider((ref) => SyllableRepository());
 
@@ -111,7 +113,7 @@ class _PhaseTwoScreenState extends ConsumerState<PhaseTwoScreen> {
           const SizedBox(height: 10),
           IconButton(
             icon: const Icon(Icons.volume_up, color: Color(0xFF6C5CE7), size: 40),
-            onPressed: () {},
+            onPressed: () => ref.read(audioServiceProvider).playAsset(word.soundAsset),
           ),
         ],
       ),
@@ -128,8 +130,10 @@ class _PhaseTwoScreenState extends ConsumerState<PhaseTwoScreen> {
               setState(() {
                 _userSyllables[index] = receivedSyllable;
               });
+              ref.read(audioServiceProvider).playAsset('audio/syllables/${receivedSyllable.toLowerCase()}.mp3');
               _checkWin();
             } else {
+              ref.read(audioServiceProvider).playWrong();
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text("Tente outra sílaba!"), duration: Duration(seconds: 1)),
               );
@@ -165,6 +169,7 @@ class _PhaseTwoScreenState extends ConsumerState<PhaseTwoScreen> {
 
   void _checkWin() {
     if (!_userSyllables.contains(null)) {
+      ref.read(audioServiceProvider).playCorrect();
       ref.read(profileProvider.notifier).updateStars(15);
       ref.read(profileProvider.notifier).updateProgress('syllables', 0.1); // +10% por palavra
       _showSuccessDialog();

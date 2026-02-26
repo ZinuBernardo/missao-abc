@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import '../models/reading_model.dart';
 import '../repositories/reading_repository.dart';
+import '../../../core/services/audio_service.dart';
+import '../../auth/providers/profile_provider.dart';
 
 final readingRepositoryProvider = Provider((ref) => ReadingRepository());
 
@@ -102,7 +104,7 @@ class PhaseThreeScreen extends ConsumerWidget {
               bottom: 20,
               child: IconButton(
                 icon: const Icon(Icons.volume_up, size: 40, color: Color(0xFF0369A1)),
-                onPressed: () {},
+                onPressed: () => ref.read(audioServiceProvider).playAsset(module.audioAsset),
               ),
             ),
           ],
@@ -150,10 +152,12 @@ class PhaseThreeScreen extends ConsumerWidget {
 
   void _handleChoice(BuildContext context, WidgetRef ref, String choice, String correct) {
     if (choice == correct) {
+      ref.read(audioServiceProvider).playCorrect();
       ref.read(profileProvider.notifier).updateStars(20);
       ref.read(profileProvider.notifier).updateProgress('words', 0.15); // +15% por leitura
       _showSuccess(context, ref);
     } else {
+      ref.read(audioServiceProvider).playWrong();
       _showError(context);
     }
   }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/story_model.dart';
 import '../repositories/story_repository.dart';
+import '../../../core/services/audio_service.dart';
+import '../../auth/providers/profile_provider.dart';
 
 final storyRepositoryProvider = Provider((ref) => StoryRepository());
 
@@ -46,9 +48,10 @@ class _PhaseFourScreenState extends ConsumerState<PhaseFourScreen> {
   }
 
   Widget _buildTopNav(BuildContext context, StoryModel story) {
+    final profile = ref.watch(profileProvider);
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -56,11 +59,23 @@ class _PhaseFourScreenState extends ConsumerState<PhaseFourScreen> {
               icon: const Icon(Icons.close, color: Colors.black54, size: 30),
               onPressed: () => Navigator.pop(context),
             ),
-            Text(
-              story.title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: const Color(0xFF6C5CE7).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.star, color: Colors.orange, size: 20),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${profile?.totalStars ?? 0}',
+                    style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF6C5CE7)),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(width: 48), // Spacer
           ],
         ),
       ),
@@ -92,7 +107,7 @@ class _PhaseFourScreenState extends ConsumerState<PhaseFourScreen> {
                 _buildSentence(page.text, page.highlightWords),
                 const SizedBox(height: 30),
                 GestureDetector(
-                  onTap: () {}, // Play audio
+                  onTap: () => ref.read(audioServiceProvider).playAsset(page.audioAsset),
                   child: Container(
                     padding: const EdgeInsets.all(15),
                     decoration: const BoxDecoration(color: Color(0xFF6C5CE7), shape: BoxShape.circle),
@@ -148,7 +163,50 @@ class _PhaseFourScreenState extends ConsumerState<PhaseFourScreen> {
               _pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
             })
           else
-            _buildNavButton(Icons.check, () => Navigator.pop(context), color: Colors.green),
+            _buildNavButton(Icons.check, () {
+              ref.read(audioServiceProvider).playCorrect();
+              ref.read(profileProvider.notifier).updateStars(50);
+              ref.read(profileProvider.notifier).updateProgress('reading', 0.2);
+              _showCompletionDialog();
+            }, color: Colors.green),
+        ],
+      ),
+    );
+  }
+
+  void _showCompletionDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+        title: const Center(child: Text("Fim da História! 📖", style: TextStyle(fontWeight: FontWeight.bold))),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Lottie.network(
+              'https://assets10.lottiefiles.com/packages/lf20_tou99bm8.json', // Party animation
+              height: 150,
+            ),
+            const Text("Você é um excelente leitor! Ganhou 50 estrelas!"),
+          ],
+        ),
+        actions: [
+          Center(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF6C5CE7),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+              ),
+              onPressed: () {
+                Navigator.pop(context); // Dialog
+                Navigator.pop(context); // Screen
+              },
+              child: const Text("VOLTAR AO MAPA"),
+            ),
+          ),
         ],
       ),
     );
