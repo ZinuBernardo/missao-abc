@@ -6,6 +6,21 @@ final profileProvider = StateNotifierProvider<ProfileNotifier, UserProfile?>((re
   return ProfileNotifier();
 });
 
+final availableProfilesProvider = StreamProvider<List<UserProfile>>((ref) {
+  return FirebaseFirestore.instance.collection('profiles').snapshots().map((snapshot) {
+    return snapshot.docs.map((doc) {
+      final data = doc.data();
+      return UserProfile(
+        id: doc.id,
+        name: data['name'] ?? 'Novo Herói',
+        avatarAsset: data['avatarAsset'] ?? 'assets/images/avatars/boy.png',
+        totalStars: data['totalStars'] ?? 0,
+        progress: Map<String, double>.from(data['progress'] ?? {}),
+      );
+    }).toList();
+  });
+});
+
 class ProfileNotifier extends StateNotifier<UserProfile?> {
   ProfileNotifier() : super(null);
 
@@ -37,9 +52,4 @@ class ProfileNotifier extends StateNotifier<UserProfile?> {
   }
 }
 
-final availableProfilesProvider = Provider<List<UserProfile>>((ref) {
-  return [
-    UserProfile(id: '1', name: 'Davi', avatarAsset: 'assets/images/avatars/boy.png', totalStars: 150),
-    UserProfile(id: '2', name: 'Alice', avatarAsset: 'assets/images/avatars/girl.png', totalStars: 45),
-  ];
-});
+// Removido o provider estático para usar o StreamProvider acima

@@ -26,21 +26,25 @@ class ProfileSelectionScreen extends ConsumerWidget {
             const SizedBox(height: 10),
             const Text("Escolha seu perfil para continuar", style: TextStyle(color: Colors.grey)),
             const Spacer(),
-            SizedBox(
-              height: 300,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 30),
-                itemCount: profiles.length + 1,
-                itemBuilder: (context, index) {
-                  if (index == profiles.length) return _buildAddProfile(context);
-                  return _buildProfileCard(context, ref, profiles[index]);
-                },
+            profiles.when(
+              data: (profileList) => SizedBox(
+                height: 300,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 30),
+                  itemCount: profileList.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index == profileList.length) return _buildAddProfile(context);
+                    return _buildProfileCard(context, ref, profileList[index]);
+                  },
+                ),
               ),
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (err, stack) => Center(child: Text("Erro ao carregar perfis: $err")),
             ),
             const Spacer(),
             Lottie.network(
-              'https://assets9.lottiefiles.com/packages/lf20_myejioos.json', // Animação de boas-vindas
+              'https://assets9.lottiefiles.com/packages/lf20_myejioos.json',
               height: 200,
             ),
           ],
